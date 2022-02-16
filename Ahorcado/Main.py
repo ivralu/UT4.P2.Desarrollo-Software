@@ -1,127 +1,125 @@
-import tkinter as tk;
-from tkinter import messagebox;
-import random;
+# coding=UTF-8
+# Viega Ruiz, Ismael
 
-class ahorcado():
+def solicitaPalabraSecreta():
+    numAciertos = []
 
-    def __init__(self):
+    palabraSecreta = input("\nIntroduce la palabra secreta: ")
 
-        self.letrasUsadas=[]
+    for i in range(len(palabraSecreta)):
+        numAciertos.append(False)
 
-        self.raiz = tk.Tk()
+    return palabraSecreta,numAciertos
 
-        self.raiz.config(width=1000, height = 600, bg="blue",relief = "groove",bd=10)
+def muestraPalabraSecreta(palabraSecreta, numAciertos):
+    indice = 0
+    palabra = ""
 
- 
-
-        self.juegoFrame = tk.Frame(self.raiz)
-
-        self.juegoFrame.config (width=1000, height = 600,relief = "sunken",bd=15)
-
-        self.juegoFrame.grid_propagate(False)
-
-        self.juegoFrame.pack()
-
-        self.lbl1 = tk.Label(self.juegoFrame,text= "Introduce una letra", font=("Verdana", 24),).grid(row=0, column=0,padx=10,pady=10)
-
-        self.letraObtenida=tk.StringVar()
-
-        self.letra= tk.Entry(self.juegoFrame,width=1,font=("Verdana", 24),textvariable=self.letraObtenida)
-
-        self.letra. grid(row=0, column=1,padx=10,pady=10)
-
-        self.letraObtenida.trace("w", lambda *args: self.limitador(self.letraObtenida))
-
- 
-
-        self.letra.focus()
-
-        self.probarLetra = tk.Button(self.juegoFrame,text="Probar",bg="yellow",command=self.probarLetraFuncion).grid(row=1,column=0,pady=10)
-
-        self.palabra = self.lee_archivo()
-
-        self.guiones = [tk.Label(self.juegoFrame,text="_",font=("verdana",30)) for  _ in self.palabra ]
-
-        inicialX=200
-
-        for i in range(len(self.palabra)):
-
-            self.guiones[i].place(x=inicialX,y=400)
-
-            inicialX+=50
-
-        self.vidas = 7
-
-        self.lbl2=tk.Label(self.juegoFrame,text= f"{self.vidas} vidas.", font=("Verdana", 24),)
-
-        self.lbl2.grid(row=0, column=80,padx=10,pady=10)
-
- 
-
- 
-
-        self.raiz.mainloop()
-
- 
-
- 
-
-    def lee_archivo(self):
-
-        archivo = open("palabras.txt")
-
-        conjuntoPalabras= list(archivo.read().split("\n"))
-
-        palabra = conjuntoPalabras[random.randint(0,len(conjuntoPalabras)-1)].lower()
-
-        archivo.close()
-
-        return palabra
-
- 
-
-    def probarLetraFuncion(self):
-
- 
-
-        self.letrasUsadas.append(self.letraObtenida.get())
-
-        print(self.letrasUsadas)
-
-        if self.letraObtenida.get() in self.palabra:
-
-            if self.palabra.count(self.letraObtenida.get())>0:
-
-                for i in range(len(self.palabra)):
-
-                    if self.palabra[i]==self.letraObtenida.get():
-
-                        self.guiones[i].config(text=""+self.letraObtenida.get())
-
-                else:
-
-                    self.guiones[self.palabra.index(self.letraObtenida.get())].config(text=""+self.letraObtenida.get())
-
+    for acierto in numAciertos:
+        if acierto:
+            palabra = palabra + palabraSecreta[indice]
         else:
+            palabra = palabra + "*"
+        
+        indice += 1
+    
+    print("Palabra Secreta: " + palabra)
+    print("")
 
-            self.vidas-=1
+def solicitaLetra(letrasIntroducidas):
+    while True:
+        letra = input("Introduce una sola letra: ")
 
-            self.lbl2.configure(text=f"{self.vidas} vidas.")
+        if len(letra) != 1:
+            print("Por favor, solo una letra.")
+        else:
+            break
 
-            if self.vidas==0:
+    letrasIntroducidas = letrasIntroducidas + letra + " "
+    return letra, letrasIntroducidas
 
-                messagebox.showwarning(title="Derrota",message="Se te acabaron las vidas")
+def compruebaPalabraSecreta(letraIntroducida, palabraSecreta, numAciertos):
+    haAcertado = False
 
-        self.letra.delete(0,1)
+    for i in range(len(palabraSecreta)):
+        if palabraSecreta[i] == letraIntroducida:
+            numAciertos[i] = True
+            haAcertado = True
 
- 
+    return haAcertado, numAciertos
 
-    def limitador(self,entrada):
+def muestraDibujo(numFallos):
+    print("\nDibujo:")
 
-        if len(entrada.get()) > 0:
+    if numFallos == 1:
+        print("------")
+        print("|   |")
+        print("|   o")
+        print("|  ")
+        print("|  ")
+        print("_________")
 
-            entrada.set(entrada.get()[:1])
+    elif numFallos == 2:
+        print("------")
+        print("|   |")
+        print("|   o")
+        print("|  /|")
+        print("|")
+        print("_________")
+        
+    elif numFallos == 3:
+        print("------")
+        print("|   |")
+        print("|   o")
+        print("|  /|\\")
+        print("|")
+        print("_________")
 
- 
+    elif numFallos == 4:
+        print("------")
+        print("|   |")
+        print("|   o")
+        print("|  /|\\")
+        print("|  / ")
+        print("_________")
+        
+    elif numFallos == 5:
+        print("------")
+        print("|   |")
+        print("|   o")
+        print("|  /|\\")
+        print("|  / \\")
+        print("_________")
+        
+    print("")
 
-juego=ahorcado()
+print("Bienvenido a 'AHORCADO'.")
+print("Pd: Tienes 5 intentos para adivinar la palabra secreta.")
+numFallos = 0
+letrasIntroducidas = ""
+palabraSecreta, numAciertos = solicitaPalabraSecreta()
+
+while True:
+    muestraPalabraSecreta(palabraSecreta, numAciertos)
+    
+    if numFallos != 0:
+        muestraDibujo(numFallos)
+        print("-----------------------------------------")
+        print("Letras introducidas: ", letrasIntroducidas)
+        
+    letra, letrasIntroducidas = solicitaLetra(letrasIntroducidas)
+    acierto, numAciertos = compruebaPalabraSecreta(letra, palabraSecreta, numAciertos)
+
+    if not acierto:
+        numFallos = numFallos + 1
+
+    if numAciertos.count(True) == len(palabraSecreta) or numFallos == 5:
+        break
+    
+if numFallos == 5:
+    muestraPalabraSecreta(palabraSecreta, numAciertos)
+    muestraDibujo(numFallos)
+
+    print("\nVaya, se te han acabado las oportunidades. Has perdido.")
+else:
+    print("\n¡Enhorabuena! Has ganado.")
